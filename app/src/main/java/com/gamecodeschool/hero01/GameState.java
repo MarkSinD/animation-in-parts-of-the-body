@@ -1,5 +1,8 @@
 package com.gamecodeschool.hero01;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 public class GameState {
     //Использование ключевого слова volatile гарантирует,
     // что все потоки всегда будут использовать общее,
@@ -10,8 +13,16 @@ public class GameState {
     private static volatile boolean mGamerOver = true;
     private static volatile boolean mDrawing = false;
 
-    void startNewGame(){
+    private EngineController mEngineController;
 
+    GameState(EngineController gs, Context context){
+        mEngineController = gs;
+    }
+
+    void startNewGame(){
+        stopEverything();
+        mEngineController.startNewLevel();
+        startEverything();
     }
 
     void stopEverything(){

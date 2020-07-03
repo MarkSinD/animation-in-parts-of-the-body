@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.SurfaceHolder;
 
@@ -28,6 +29,7 @@ public class GameActivity extends Activity {
 
         mGameEngine = new GameEngine(this, size);
         setContentView(mGameEngine);
+        Log.e("Name : " ,  "onCreate HERO");
     }
 
     @Override
