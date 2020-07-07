@@ -29,9 +29,9 @@ public class AnimatorNonStop implements Animator {
     }
 
     @Override
-    public Rect getCurrentFrame(long time, Transform transform) {
+    public Rect getCurrentFrame(long time, TransformCharacter transform) {
 
-        Log.e("NONSTOP " , " Animation Working");
+        // Log.e("NONSTOP " , " " + mCurrentFrame);
 
 
         if(transform.isHeadRight()) {
@@ -47,15 +47,20 @@ public class AnimatorNonStop implements Animator {
                 mCurrentFrame++;
                 if (mCurrentFrame >= mFrameCount) {
                     mCurrentFrame = 0;
+                    if(!transform.isContinuousAnimation())
+                        transform.setAttack(false);
 
                 }
             }
 
-
             CurrentMoving = RIGHT;
-
         }
         else{
+
+            this.mSourceRect.left = mCurrentFrame * mFrameWidth;
+            this.mSourceRect.right = this.mSourceRect.left + mFrameWidth;
+
+
             if(CurrentMoving == RIGHT){
                 mCurrentFrame = mFrameCount - 1;
             }
@@ -64,17 +69,18 @@ public class AnimatorNonStop implements Animator {
                 mCurrentFrame--;
                 if (mCurrentFrame <= 0 ) {
                     mCurrentFrame = mFrameCount - 1;
+                    if(!transform.isContinuousAnimation())
+                        transform.setAttack(false);
 
                 }
             }
 
-            this.mSourceRect.left = mCurrentFrame * mFrameWidth;
-            this.mSourceRect.right = this.mSourceRect.left + mFrameWidth;
 
-            Log.e("mSectionToDrawBottom ", "Left = " + this.mSourceRect.left);
+
+            /*Log.e("mSectionToDrawBottom ", "Left = " + this.mSourceRect.left);
             Log.e("mSectionToDrawBottom ", "Top = " + this.mSourceRect.top);
             Log.e("mSectionToDrawBottom ", "Right = " + this.mSourceRect.right);
-            Log.e("mSectionToDrawBottom ", "Bottom = " + this.mSourceRect.bottom);
+            Log.e("mSectionToDrawBottom ", "Bottom = " + this.mSourceRect.bottom);*/
             CurrentMoving = LEFT;
         }
 

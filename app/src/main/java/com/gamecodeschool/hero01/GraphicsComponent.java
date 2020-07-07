@@ -7,5 +7,5 @@ import android.graphics.PointF;
 
 public interface GraphicsComponent {
     void initialize(Context c, GameObjectSpec spec, PointF objectSize);
-    void draw(Canvas canvas, Paint paint, Transform t);
+    void draw(Canvas canvas, Paint paint, Transform transform);
 }

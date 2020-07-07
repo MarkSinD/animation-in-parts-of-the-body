@@ -1,7 +1,6 @@
 package com.gamecodeschool.hero01;
 
 import android.graphics.Rect;
-import android.util.Log;
 
 public class AnimatorCanStop implements Animator  {
     private static String RIGHT = "right";
@@ -27,7 +26,7 @@ public class AnimatorCanStop implements Animator  {
     }
 
     @Override
-    public Rect getCurrentFrame(long time, Transform transform) {
+    public Rect getCurrentFrame(long time, TransformCharacter transform) {
 
 
         if(transform.isHeadRight()) {
@@ -47,7 +46,6 @@ public class AnimatorCanStop implements Animator  {
                 }
             }
 
-
             CurrentMoving = RIGHT;
 
         }
@@ -60,17 +58,12 @@ public class AnimatorCanStop implements Animator  {
                 mCurrentFrame--;
                 if (mCurrentFrame <= 0 ) {
                     mCurrentFrame = mFrameCount - 1;
-
                 }
             }
 
             this.mSourceRect.left = mCurrentFrame * mFrameWidth;
             this.mSourceRect.right = this.mSourceRect.left + mFrameWidth;
 
-            Log.e("mSectionToDrawBottom ", "Left = " + this.mSourceRect.left);
-            Log.e("mSectionToDrawBottom ", "Top = " + this.mSourceRect.top);
-            Log.e("mSectionToDrawBottom ", "Right = " + this.mSourceRect.right);
-            Log.e("mSectionToDrawBottom ", "Bottom = " + this.mSourceRect.bottom);
             CurrentMoving = LEFT;
         }
 

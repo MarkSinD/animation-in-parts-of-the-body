@@ -3,7 +3,6 @@ package com.gamecodeschool.hero01;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.PointF;
-import android.media.SoundPool;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -11,7 +10,7 @@ import android.view.SurfaceView;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameEngine extends SurfaceView implements Runnable,
-        EngineController, GameEngineBroadcaster {
+        EngineController, GameEngineBroadcaster, PlayerBulletSpawner {
 
     private GameState mGameState;
     private SoundEngine mSoundEngine;
@@ -21,7 +20,10 @@ public class GameEngine extends SurfaceView implements Runnable,
     private Renderer mRenderer;
     Hero hero;
     private GameObjectFactory mGameObjectFactory;
+    PhysicsEngine mPhysicsEngine;
     GameObject mPlayerObject;
+    GameObject mZombieObject;
+    GameObject mBulletObject;
 
     private CopyOnWriteArrayList<InputObserver>
             inputObservers = new CopyOnWriteArrayList<>();
@@ -35,9 +37,12 @@ public class GameEngine extends SurfaceView implements Runnable,
         mRenderer = new Renderer(this, size);
         mHUD = new HUD(context, size);
         mSoundEngine = SoundEngine.getInstance(context);
+        mPhysicsEngine = new PhysicsEngine();
 
         mGameObjectFactory = new GameObjectFactory(context, this);
         mPlayerObject = mGameObjectFactory.create(new PlayerSpec(), new PointF(500, 500));
+        mZombieObject = mGameObjectFactory.create(new ZombieSpec(), new PointF(1500, 500));
+        mBulletObject = mGameObjectFactory.create(new BulletSpec(), new PointF(100,100));
     }
 
     @Override
@@ -45,10 +50,10 @@ public class GameEngine extends SurfaceView implements Runnable,
         while ( mGameState.getThreadRunning() ){
             long frameStartTime = System.currentTimeMillis();
             if( !mGameState.getPaused()){
-                // PhysicsEngine
+                mPhysicsEngine.update(mFPS,mBulletObject, mPlayerObject,mGameState);
             }
 
-            mRenderer.draw(mGameState, mPlayerObject, mHUD);
+            mRenderer.draw(mGameState, mPlayerObject, mZombieObject, mBulletObject, mHUD);
 
             long timeThisFrame = System.currentTimeMillis() - frameStartTime;
             if(timeThisFrame >= 1){
@@ -90,5 +95,15 @@ public class GameEngine extends SurfaceView implements Runnable,
     @Override
     public void addObserver(InputObserver o) {
         inputObservers.add(o);
+    }
+
+    @Override
+    public boolean spawnPlayerLaser(Transform transform) {
+
+        if(mBulletObject.spawn(transform)){
+
+        }
+        Log.e("spawnPlayerLaser", " выстрел");
+        return true;
     }
 }

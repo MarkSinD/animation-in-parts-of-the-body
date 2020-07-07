@@ -11,7 +11,7 @@ import android.graphics.Rect;
 public class Hero {
 
     Context mContext;
-    Transform heroTransform;
+    TransformCharacter heroTransform;
     private String mBitmapName1;
     private String mBitmapName2;
     private String mBitmapName3;
@@ -65,7 +65,7 @@ public class Hero {
     }
 
     public void draw(Canvas canvas, Paint paint){
-        if(heroTransform.isShooting()){
+        if(heroTransform.isAttack()){
             mSectionToDraw = mAnimatorEngine1.getCurrentFrame(System.currentTimeMillis(), heroTransform);
 
             Rect screenCoorfinates = new Rect(mStartPosition.x, mStartPosition.y,

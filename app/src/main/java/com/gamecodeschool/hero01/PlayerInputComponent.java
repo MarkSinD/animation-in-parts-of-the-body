@@ -9,13 +9,6 @@ public class PlayerInputComponent implements  InputObserver {
 
 
     static int mUpIndex = -1;
-    static int mLeftIndex = -1;
-    static int mRightIndex = -1;
-    static int mAttackIndex = -1;
-    static int mJumpIndex = -1;
-    static int mPauseIndex = -1;
-
-    static int mUpID = -1;
     static int mLeftID = -1;
     static int mRightID = -1;
     static int mAttackID = -1;
@@ -28,12 +21,13 @@ public class PlayerInputComponent implements  InputObserver {
     static boolean mJumpPressed = false;
     static boolean mPausePressed = false;
 
-    private Transform mTransform;
+    private TransformCharacter mTransform;
+    private PlayerBulletSpawner mPBS;
 
-    PlayerInputComponent( GameEngineBroadcaster ger){ ger.addObserver(this);}
+    PlayerInputComponent( GameEngine ger){ ger.addObserver(this); mPBS = ger;}
 
     public void setTransform(Transform transform){
-        mTransform = transform;
+        mTransform = (TransformCharacter)transform;
     }
 
     @Override
@@ -46,7 +40,6 @@ public class PlayerInputComponent implements  InputObserver {
 
 
         int index = event.getActionIndex();
-        int count = event.getPointerCount();
         int id = event.getPointerId(index);
 
 
@@ -81,7 +74,8 @@ public class PlayerInputComponent implements  InputObserver {
                         SoundEngine.stopFire();
                         SoundEngine.stopVoice();
 
-                        mTransform.setShooting(false);
+                        mTransform.setContinuousAnimation(false);
+                        //mTransform.setAttack(false);
                     }
 
                     else if (mPauseID == id) {
@@ -120,7 +114,8 @@ public class PlayerInputComponent implements  InputObserver {
                         SoundEngine.playBullets();
                         SoundEngine.stopVoice();
 
-                        mTransform.setShooting(false);
+                        mTransform.setContinuousAnimation(false);
+                        //mTransform.setAttack(false);
                     }
 
                     else if (mPauseID == id) {
@@ -135,7 +130,7 @@ public class PlayerInputComponent implements  InputObserver {
                     mTransform.setIdling(false);
                     if (buttons.get(HUD.LEFT).contains(x, y)) {
                         if (!mRightPressed) {
-                            mTransform.setWalking(true, Transform.LEFT);
+                            mTransform.setWalking(true, TransformCharacter.LEFT);
                             SoundEngine.playStep();
                         }
 
@@ -146,7 +141,7 @@ public class PlayerInputComponent implements  InputObserver {
                     }
                     else if (buttons.get(HUD.RIGHT).contains(x, y)) {
                         if (!mLeftPressed) {
-                            mTransform.setWalking(true, Transform.RIGHT);
+                            mTransform.setWalking(true, TransformCharacter.RIGHT);
                             SoundEngine.playStep();
                         }
 
@@ -168,7 +163,9 @@ public class PlayerInputComponent implements  InputObserver {
                         mAttackID = id;
                         mAttackPressed = true;
 
-                        mTransform.setShooting(true);
+                        mPBS.spawnPlayerLaser(mTransform);
+                        mTransform.setAttack(true);
+                        mTransform.setContinuousAnimation(true);
                     }
                     else if (buttons.get(HUD.PAUSE).contains(x, y)) {
                         mPauseID = id;
@@ -178,10 +175,10 @@ public class PlayerInputComponent implements  InputObserver {
 
                 case MotionEvent.ACTION_MOVE:
                     if(mTransform.isFacingLeft() && buttons.get(HUD.RIGHT).contains(x,y)){
-                        mTransform.setWalking(true, Transform.RIGHT);
+                        mTransform.setWalking(true, TransformCharacter.RIGHT);
                     }
                     else if(mTransform.isFacingRight() && buttons.get(HUD.LEFT).contains(x,y)){
-                        mTransform.setWalking(true, Transform.LEFT);
+                        mTransform.setWalking(true, TransformCharacter.LEFT);
                     }
                     break;
             }

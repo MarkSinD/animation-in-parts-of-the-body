@@ -24,7 +24,7 @@ public class PlayerSpec extends GameObjectSpec {
         bitmaps.put("bottomshootplayer3", 9);
     }
 
-    private static final float speed = 10f;
+    private static final float speed = 200f;
     private static final PointF size = new PointF(512f, 512f);
     private static final String[] components = new String [] {
             "PlayerInputComponent",

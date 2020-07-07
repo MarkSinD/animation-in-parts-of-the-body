@@ -6,10 +6,8 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.util.Log;
 
 public class AnimatedHeroGraphicsComponent implements GraphicsComponent {
-    Context mContext;
     private String bnWalkTop = "topwalk"; // bn - Bitmap Name
     private String bnWalkBottom = "bottomwalk";
 
@@ -38,7 +36,7 @@ public class AnimatedHeroGraphicsComponent implements GraphicsComponent {
     private Rect mSectionToDrawBottom;
 
     private Point objectSize= new Point(512,512);
-    private Point mStartPosition = new Point(0,0);
+    private Point mStartPosition = new Point(500,500);
 
     @Override
     public void initialize(Context context, GameObjectSpec spec, PointF objectSize) {
@@ -67,8 +65,6 @@ public class AnimatedHeroGraphicsComponent implements GraphicsComponent {
         mAnWalkBottom  = new AnimatorCanStop( objectSize.x, objectSize.y, frameCountWalk, 30);
         BitmapStore.addBitmap( context , bnWalkBottom, new PointF(TotalWidthWalk, objectSize.y), true );
 
-
-
         mAnIdleTop  = new AnimatorCanStop( objectSize.x, objectSize.y, frameCountIdle, 25);
         float TotalWidthIdle = objectSize.x * frameCountIdle;
         BitmapStore.addBitmap( context , bnIdleTop, new PointF(TotalWidthIdle, objectSize.y), true );
@@ -78,7 +74,7 @@ public class AnimatedHeroGraphicsComponent implements GraphicsComponent {
 
 
 
-        mAnShootTop  = new AnimatorCanStop( objectSize.x, objectSize.y, frameCountShoot, 40);
+        mAnShootTop  = new AnimatorNonStop( objectSize.x, objectSize.y, frameCountShoot, 50);
         float TotalWidthShoot = objectSize.x * frameCountShoot;
         BitmapStore.addBitmap( context , bnShootTop, new PointF(TotalWidthShoot, objectSize.y), true );
 
@@ -90,67 +86,68 @@ public class AnimatedHeroGraphicsComponent implements GraphicsComponent {
     @Override
     public void draw(Canvas canvas, Paint paint, Transform transform) {
 
+        TransformCharacter transformCharacter = (TransformCharacter) transform;
 
-        Rect screenCoorfinates = new Rect(mStartPosition.x, mStartPosition.y, mStartPosition.x + 2 * objectSize.x, mStartPosition.y + 2 * objectSize.y);
+        Rect screenCoorfinates = new Rect((int) transformCharacter.getLocation().x, (int) transformCharacter.getLocation().y,
+                (int) transformCharacter.getLocation().x +  objectSize.x, (int) transformCharacter.getLocation().y + objectSize.y);
 
         // Голова
-        if(transform.isShooting()){
-            mSectionToDrawBottom = mAnShootTop.getCurrentFrame(System.currentTimeMillis(), transform);
+        if(transformCharacter.isAttack()){
+            mSectionToDrawTop = mAnShootTop.getCurrentFrame(System.currentTimeMillis(), transformCharacter);
 
-
-            if (transform.isHeadRight())
-                canvas.drawBitmap(BitmapStore.getBitmap(bnShootTop), mSectionToDrawBottom, screenCoorfinates, paint);
-            else if (transform.isHeadLeft())
-                canvas.drawBitmap(BitmapStore.getBitmapReversed(bnShootTop), mSectionToDrawBottom, screenCoorfinates, paint);
+            if (transformCharacter.isHeadRight())
+                canvas.drawBitmap(BitmapStore.getBitmap(bnShootTop), mSectionToDrawTop, screenCoorfinates, paint);
+            else if (transformCharacter.isHeadLeft())
+                canvas.drawBitmap(BitmapStore.getBitmapReversed(bnShootTop), mSectionToDrawTop, screenCoorfinates, paint);
 
 
         }
-        else if(transform.isWalking()) {
-            mSectionToDrawTop = mAnWalkTop.getCurrentFrame(System.currentTimeMillis(), transform);
+        else if(transformCharacter.isWalking()) {
+            mSectionToDrawTop = mAnWalkTop.getCurrentFrame(System.currentTimeMillis(), transformCharacter);
 
-            if (transform.isHeadRight())
+            if (transformCharacter.isHeadRight())
                 canvas.drawBitmap(BitmapStore.getBitmap(bnWalkTop), mSectionToDrawTop, screenCoorfinates, paint);
-            else if (transform.isHeadLeft())
+            else if (transformCharacter.isHeadLeft())
                 canvas.drawBitmap(BitmapStore.getBitmapReversed(bnWalkTop), mSectionToDrawTop, screenCoorfinates, paint);
 
         }
         else{
-            mSectionToDrawTop = mAnIdleTop.getCurrentFrame(System.currentTimeMillis(), transform);
+            mSectionToDrawTop = mAnIdleTop.getCurrentFrame(System.currentTimeMillis(), transformCharacter);
 
-            if (transform.isHeadRight())
+            if (transformCharacter.isHeadRight())
                 canvas.drawBitmap(BitmapStore.getBitmap(bnIdleTop), mSectionToDrawTop, screenCoorfinates, paint);
-            else if (transform.isHeadLeft())
+            else if (transformCharacter.isHeadLeft())
                 canvas.drawBitmap(BitmapStore.getBitmapReversed(bnIdleTop), mSectionToDrawTop, screenCoorfinates, paint);
 
         }
 
         // Ноги
-        if(transform.isWalking()) {
-            mSectionToDrawBottom = mAnWalkBottom.getCurrentFrame(System.currentTimeMillis(), transform);
+        if(transformCharacter.isWalking()) {
+            mSectionToDrawBottom = mAnWalkBottom.getCurrentFrame(System.currentTimeMillis(), transformCharacter);
 
 
-            if (transform.isHeadRight())
+            if (transformCharacter.isHeadRight())
                 canvas.drawBitmap(BitmapStore.getBitmap(bnWalkBottom), mSectionToDrawBottom, screenCoorfinates, paint);
-            else if (transform.isHeadLeft())
+            else if (transformCharacter.isHeadLeft())
                 canvas.drawBitmap(BitmapStore.getBitmapReversed(bnWalkBottom), mSectionToDrawBottom, screenCoorfinates, paint);
         }
-        else if(transform.isShooting() && !transform.isFacingLeft() && !transform.isFacingRight()) {
-            mSectionToDrawBottom = mAnShootBottom.getCurrentFrame(System.currentTimeMillis(), transform);
+        else if(transformCharacter.isAttack() && !transformCharacter.isFacingLeft() && !transformCharacter.isFacingRight()) {
+            mSectionToDrawBottom = mAnShootBottom.getCurrentFrame(System.currentTimeMillis(), transformCharacter);
 
 
-            if (transform.isHeadRight())
+            if (transformCharacter.isHeadRight())
                 canvas.drawBitmap(BitmapStore.getBitmap(bnShootBottom), mSectionToDrawBottom, screenCoorfinates, paint);
-            else if (transform.isHeadLeft())
+            else if (transformCharacter.isHeadLeft())
                 canvas.drawBitmap(BitmapStore.getBitmapReversed(bnShootBottom), mSectionToDrawBottom, screenCoorfinates, paint);
 
         }
         else{
-            mSectionToDrawBottom = mAnIdleBottom.getCurrentFrame(System.currentTimeMillis(), transform);
+            mSectionToDrawBottom = mAnIdleBottom.getCurrentFrame(System.currentTimeMillis(), transformCharacter);
 
 
-            if (transform.isHeadRight())
+            if (transformCharacter.isHeadRight())
                 canvas.drawBitmap(BitmapStore.getBitmap(bnIdleBottom), mSectionToDrawBottom, screenCoorfinates, paint);
-            else if (transform.isHeadLeft())
+            else if (transformCharacter.isHeadLeft())
                 canvas.drawBitmap(BitmapStore.getBitmapReversed(bnIdleBottom), mSectionToDrawBottom, screenCoorfinates, paint);
 
         }

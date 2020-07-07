@@ -5,12 +5,12 @@ import android.graphics.PointF;
 
 public class GameObjectFactory {
     private Context mContext;
-    private GameEngineBroadcaster mGameEngineReference;
+    private GameEngine mGameEngine;
     private int mPixelsPerMetre;
 
-    GameObjectFactory( Context context, GameEngineBroadcaster gameEngine){
+    GameObjectFactory( Context context, GameEngine gameEngine){
         mContext = context;
-        mGameEngineReference = gameEngine;
+        mGameEngine = gameEngine;
     }
 
 
@@ -24,8 +24,17 @@ public class GameObjectFactory {
 
         switch( object.getTag() ){
             case "player":
-                object.setTransform(new Transform(spec.getSpeed(), spec.getSize().x, spec.getSize().y, location));
+                object.setTransform(new TransformCharacter(spec.getSpeed(), spec.getSize().x, spec.getSize().y, location));
                 break;
+
+            case "zombie":
+                object.setTransform(new TransformCharacter(spec.getSpeed(), spec.getSize().x, spec.getSize().y, location));
+                break;
+
+            case "bullet":
+                object.setTransform(new TransformBullet(spec.getSpeed(), spec.getSize().x, spec.getSize().y, location));
+                break;
+
 
             default:
                 break;
@@ -37,7 +46,7 @@ public class GameObjectFactory {
                 case "PlayerInputComponent":
                     // Code coming soon
                     object.setPlayerInputTransform(
-                            new PlayerInputComponent(mGameEngineReference));
+                            new PlayerInputComponent(mGameEngine));
                     break;
                 case "AnimatedHeroGraphicsComponent":
                     // Code coming soon
@@ -49,6 +58,34 @@ public class GameObjectFactory {
                     // Code coming soon
                     object.setMovement(new PlayerUpdateComponent());
                     break;
+
+                case "AnimatedZombieGraphicsComponent":
+                    // Code coming soon
+                    object.setGraphics(
+                            new AnimatedZombieGraphicsComponent(),
+                            mContext, spec, spec.getSize());
+                    break;
+                case "ZombieUpdateComponent":
+                    // Code coming soon
+                    object.setMovement(new ZombieUpdateComponent());
+                    break;
+
+                case "BulletGraphicsComponent":
+                    object.setGraphics(new BulletGraphicsComponent(),
+                            mContext, spec, spec.getSize());
+                    break;
+
+                case "BulletUpdateComponent":
+                    object.setMovement(new BulletUpdateComponent());
+                    break;
+
+                case "BulletSpawnComponent":
+                    object.setSpawner(new BulletSpawnComponent());
+                    break;
+
+                /*case "BulletSpawnComponent":
+                    object.setSpawner(new BulletSpawnComponent());
+                    break;*/
 
                 default:
                     // Error unidentified component
