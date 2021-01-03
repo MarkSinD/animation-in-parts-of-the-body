@@ -42,8 +42,8 @@ public class GameObject {
     void setPlayerInputTransform( PlayerInputComponent s){
         s.setTransform(mTransform);
     }
-    void update( long fps, Transform transform){
-        mUpdateComponent.update(fps, mTransform);
+    void update( long fps, Transform transformPlayer){
+        mUpdateComponent.update(fps, mTransform, transformPlayer);
     }
 
     boolean checkActive(){ return mActive; }

@@ -24,6 +24,8 @@ public class GameEngine extends SurfaceView implements Runnable,
     GameObject mPlayerObject;
     GameObject mZombieObject;
     GameObject mBulletObject;
+    GameObject mBackObjectTop;
+    GameObject mBackObjectBottom;
 
     private CopyOnWriteArrayList<InputObserver>
             inputObservers = new CopyOnWriteArrayList<>();
@@ -39,10 +41,12 @@ public class GameEngine extends SurfaceView implements Runnable,
         mSoundEngine = SoundEngine.getInstance(context);
         mPhysicsEngine = new PhysicsEngine();
 
-        mGameObjectFactory = new GameObjectFactory(context, this);
+        mGameObjectFactory = new GameObjectFactory(context, size, this);
         mPlayerObject = mGameObjectFactory.create(new PlayerSpec(), new PointF(500, 500));
         mZombieObject = mGameObjectFactory.create(new ZombieSpec(), new PointF(1500, 500));
         mBulletObject = mGameObjectFactory.create(new BulletSpec(), new PointF(100,100));
+        mBackObjectTop = mGameObjectFactory.create(new BackgroundTopSpec(), new PointF(1000,1000));
+
     }
 
     @Override
@@ -50,10 +54,10 @@ public class GameEngine extends SurfaceView implements Runnable,
         while ( mGameState.getThreadRunning() ){
             long frameStartTime = System.currentTimeMillis();
             if( !mGameState.getPaused()){
-                mPhysicsEngine.update(mFPS,mBulletObject, mPlayerObject,mGameState);
+                mPhysicsEngine.update(mFPS,mBulletObject, mPlayerObject, mBackObjectTop, mGameState);
             }
 
-            mRenderer.draw(mGameState, mPlayerObject, mZombieObject, mBulletObject, mHUD);
+            mRenderer.draw(mGameState, mPlayerObject, mZombieObject, mBulletObject, mBackObjectTop, mHUD);
 
             long timeThisFrame = System.currentTimeMillis() - frameStartTime;
             if(timeThisFrame >= 1){

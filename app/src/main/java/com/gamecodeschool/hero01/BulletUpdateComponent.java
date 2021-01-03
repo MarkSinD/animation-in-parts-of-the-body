@@ -5,7 +5,7 @@ import android.util.Log;
 
 public class BulletUpdateComponent implements UpdateComponent {
     @Override
-    public boolean update(long fps, Transform transform) {
+    public boolean update(long fps, Transform transform, Transform playerTransform) {
 
         TransformBullet transformBullet = (TransformBullet) transform;
         float range = 2000;

@@ -28,9 +28,8 @@ public class HUD {
         mScreenHeight = size.y;
         mScreenWidth = size.x;
         prepareControls();
-
-
     }
+
     void draw(Canvas c, Paint p, GameState gs){
 
         if(!gs.getGameOver()){

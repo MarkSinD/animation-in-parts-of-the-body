@@ -1,20 +1,22 @@
 package com.gamecodeschool.hero01;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.graphics.PointF;
 
 public class GameObjectFactory {
     private Context mContext;
     private GameEngine mGameEngine;
-    private int mPixelsPerMetre;
+    private Point mScreenSize;
 
-    GameObjectFactory( Context context, GameEngine gameEngine){
+    GameObjectFactory(Context context, Point mScreenSize, GameEngine gameEngine){
         mContext = context;
+        this.mScreenSize = mScreenSize;
         mGameEngine = gameEngine;
     }
 
 
-    GameObject create(GameObjectSpec spec, PointF location ){
+    GameObject create(GameObjectSpec spec, PointF location){
 
         GameObject object = new GameObject();
 
@@ -34,6 +36,9 @@ public class GameObjectFactory {
             case "bullet":
                 object.setTransform(new TransformBullet(spec.getSpeed(), spec.getSize().x, spec.getSize().y, location));
                 break;
+
+            case "background":
+                object.setTransform(new TransformBackground(spec.getSpeed(),spec.getSize().x, spec.getSize().y, location, mScreenSize));
 
 
             default:
@@ -83,9 +88,20 @@ public class GameObjectFactory {
                     object.setSpawner(new BulletSpawnComponent());
                     break;
 
-                /*case "BulletSpawnComponent":
-                    object.setSpawner(new BulletSpawnComponent());
-                    break;*/
+                case "BackgroundGraphicsComponent":
+                    object.setGraphics(new BackgroundGraphicsComponent(),
+                            mContext, spec, spec.getSize());
+                    break;
+
+                case "BackgroundUpdateComponent":
+                    object.setMovement(new BackgroundUpdateComponent());
+                    break;
+
+                case "BackgroundSpawnComponent":
+                    object.setSpawner(new BackgroundSpawnComponent());
+                    break;
+
+
 
                 default:
                     // Error unidentified component

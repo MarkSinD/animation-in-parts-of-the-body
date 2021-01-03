@@ -17,7 +17,7 @@ public class Renderer {
         mPaint = new Paint();
     }
 
-    void draw(GameState gs, GameObject objectplayer, GameObject objectzombie, GameObject objectbullet, HUD hud){
+    void draw(GameState gs, GameObject objectplayer, GameObject objectzombie, GameObject objectbullet,GameObject objectback, HUD hud){
         if(mSurfaceHolder.getSurface().isValid()){
             mCanvas = mSurfaceHolder.lockCanvas();
             mCanvas.drawColor(Color.argb(255, 180,55,55));
@@ -26,9 +26,12 @@ public class Renderer {
 
             }
 
+
+            objectback.draw(mCanvas,mPaint);
             objectplayer.draw(mCanvas, mPaint);
             objectzombie.draw(mCanvas, mPaint);
             objectbullet.draw(mCanvas, mPaint);
+
 
             mPaint.setColor(Color.argb(20, 0,99,99));
             mCanvas.drawRect(500,500,1524,1524, mPaint);
